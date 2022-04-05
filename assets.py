@@ -1,4 +1,4 @@
-from typing import List
+import sys
 from density import Density
 from velocity import *
 from fluid import Fluid
@@ -7,6 +7,7 @@ CMAPS = ['viridis', 'plasma', 'inferno', 'magma', 'cividis', 'Greys', 'Purples',
 
 def read_input(filename=""):
     """Reads input from a txt file. If none is given, lets the user enter a name.
+    The file must be in Config folder.
 
     Args:
         filename (str, optional): The name of the file to be read without the extension. Defaults to "".
@@ -18,10 +19,14 @@ def read_input(filename=""):
             list: List of Velocity objects.
     """
     if not filename:
-        print("The filename must be a txt file and within the same folder as the python file.")
+        print("The filename must be a txt file and within the Config folder of the project.")
         filename = input("Enter the filename without extension (default Input): ") or "Input"
 
-    file = open(filename + ".txt", "r")
+    try:
+        file = open("Config/" + filename + ".txt", "r")
+    except FileNotFoundError:
+        print("The file was not found, please check the spelling of filename.")
+        sys.exit()
     lines = file.read().split("\n")
     den_array = []
     vel_array = []

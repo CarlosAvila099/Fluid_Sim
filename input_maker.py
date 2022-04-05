@@ -3,6 +3,7 @@ from density import Density
 
 def create_input(density: list, velocity: list, cmap="", filename=""):
     """Creates an input file with the Density, Velocity and Colormap given.
+    The file is created in Config folder.
 
     Args:
         density (list): The list of Density objects that the input will have.
@@ -23,10 +24,10 @@ def create_input(density: list, velocity: list, cmap="", filename=""):
     
     text = text[:-1]
 
-    file = open(filename + ".txt", "w")
+    file = open("Config/" + filename + ".txt", "w")
     file.write(text)
     file.close()
-    print(f"The file has been saved as {filename}.txt")
+    print(f"The file has been saved as {filename}.txt in Config folder")
     
 
 density =   [     
@@ -41,4 +42,4 @@ velocity =  [
                 Velocity(20, 40, 5, 5, VelocityAnimation.ROTATE_CW, 5)
             ]
 
-create_input(density, velocity, cmap="Paired", filename="Input")
+create_input(density, velocity, cmap="Paired", filename="Config1")
