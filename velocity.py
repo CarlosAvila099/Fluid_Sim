@@ -61,6 +61,17 @@ class Velocity:
         if self.__animation in [VelocityAnimation.ROTATE_CW, VelocityAnimation.ROTATE_CCW]: self.__rotation = animation_value
         elif self.__animation in [VelocityAnimation.RETURN_X, VelocityAnimation.RETURN_Y]: self.__length = animation_value
 
+    def __str__(self):
+        """String conversion of a Velocity object.
+
+        Returns:
+            str: The string form of the Velocity object.
+        """
+        string = f"{self.pos_x}, {self.pos_y}, {self.strength_x}, {self.strength_y}, {int(self.__animation)}"
+        if self.__animation in [VelocityAnimation.ROTATE_CW, VelocityAnimation.ROTATE_CCW]: string += f", {self.__rotation}"
+        elif self.__animation in [VelocityAnimation.RETURN_X, VelocityAnimation.RETURN_Y]: string += f", {self.__length}"
+        return string
+
     def __rotate(self):
         """Rotates the Velocity as the animation dictates.
         """
@@ -94,15 +105,4 @@ class Velocity:
         """
         if self.__animation in [VelocityAnimation.ROTATE_CW, VelocityAnimation.ROTATE_CCW]: self.__rotate()
         elif self.__animation in [VelocityAnimation.RETURN_X, VelocityAnimation.RETURN_Y]: self.__return()
-
-    def to_string(self):
-        """Makes a string containing all the values of a Velocity object.
-
-        Returns:
-            str: The string form of the Velocity object.
-        """
-        string = f"{self.pos_x}, {self.pos_y}, {self.strength_x}, {self.strength_y}, {int(self.__animation)}"
-        if self.__animation in [VelocityAnimation.ROTATE_CW, VelocityAnimation.ROTATE_CCW]: string += f", {self.__rotation}"
-        elif self.__animation in [VelocityAnimation.RETURN_X, VelocityAnimation.RETURN_Y]: string += f", {self.__length}"
-        return string
         
