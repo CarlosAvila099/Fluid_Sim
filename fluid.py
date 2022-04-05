@@ -4,9 +4,12 @@ and the mike ash vulgarization https://mikeash.com/pyblog/fluid-simulation-for-d
 
 https://github.com/Guilouf/python_realtime_fluidsim
 """
+from filecmp import cmp
+from matplotlib import cm
 import numpy as np
 import math
 
+from assets import *
 
 class Fluid:
 
@@ -160,19 +163,17 @@ class Fluid:
             self.roty = self.rotx
         return self.rotx, self.roty
 
-
 if __name__ == "__main__":
     try:
         import matplotlib.pyplot as plt
         from matplotlib import animation
 
         inst = Fluid()
+        cmap, density, velocity = create_from_input(inst, "Input")
+        
 
-        def update_im(i):
-            # We add new density creators in here
-            inst.density[14:17, 14:17] += 100  # add density into a 3*3 square
-            # We add velocity vector values in here
-            inst.velo[20, 20] = [-2, -2]
+        def update_im(i, densities, velocities):
+            maintain_step(inst, densities, velocities)
             inst.step()
             im.set_array(inst.density)
             q.set_UVC(inst.velo[:, :, 1], inst.velo[:, :, 0])
@@ -182,11 +183,11 @@ if __name__ == "__main__":
         fig = plt.figure()
 
         # plot density
-        im = plt.imshow(inst.density, vmax=100, interpolation='bilinear')
+        im = plt.imshow(inst.density, vmax=100, interpolation='bilinear', cmap=cmap)
 
         # plot vector field
         q = plt.quiver(inst.velo[:, :, 1], inst.velo[:, :, 0], scale=10, angles='xy')
-        anim = animation.FuncAnimation(fig, update_im, interval=0)
+        anim = animation.FuncAnimation(fig, update_im, fargs=(density, velocity), interval=0)
         # anim.save("movie.mp4", fps=30, extra_args=['-vcodec', 'libx264'])
         plt.show()
 
