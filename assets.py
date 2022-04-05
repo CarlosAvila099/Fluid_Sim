@@ -1,5 +1,6 @@
 import sys
-from density import Density
+from unittest.util import sorted_list_difference
+from density import *
 from velocity import *
 from fluid import Fluid
 
@@ -13,10 +14,11 @@ def read_input(filename=""):
         filename (str, optional): The name of the file to be read without the extension. Defaults to "".
 
     Returns:
-        [str, list, list]
+        [str, list, list, list]
             str: String of the Colormap written.
             list: List of Density objects.
             list: List of Velocity objects.
+            list: List of Solid objects.
     """
     if not filename:
         print("The filename must be a txt file and within the Config folder of the project.")
@@ -30,6 +32,7 @@ def read_input(filename=""):
     lines = file.read().split("\n")
     den_array = []
     vel_array = []
+    sol_array = []
     colormap = ""
     current = ""
     length = 0
@@ -42,10 +45,14 @@ def read_input(filename=""):
         elif "velocity" in line:
             length = int(line.split("=")[1])
             current = "velocity"
+        elif "solid" in line:
+            length = int(line.split("=")[1])
+            current = "solid"
         elif length > 0:
             length -= 1
             if current == "density": den_array.append(line)
             elif current == "velocity": vel_array.append(line)
+            elif current == "solid": sol_array.append(line)
     file.close()
 
     densities = []
@@ -74,8 +81,18 @@ def read_input(filename=""):
 
         temp_vel = Velocity(pos_x, pos_y, strength_x, strength_y, animation, animation_value)
         velocities.append(temp_vel)
+    
+    solids = []
+    for sol in sol_array:
+        info = sol.split(", ")
+        pos_x = int(info[0])
+        pos_y = int(info[1])
+        size_x = int(info[2])
+        size_y = int(info[3])
+        temp_sol = Solid(pos_x, pos_y, size_x, size_y)
+        solids.append(temp_sol)
 
-    return colormap, densities, velocities
+    return colormap, densities, velocities, solids
 
 def create_from_input(fluid: Fluid, filename=""):
     """Adds Density and Velocity to a Fluid from an input file.
@@ -90,9 +107,10 @@ def create_from_input(fluid: Fluid, filename=""):
             list: List of Density objects.
             list: List of Velocity objects.
     """
-    cmap, densities, velocities = read_input(filename)
+    cmap, densities, velocities, solids = read_input(filename)
     colormap = choose_color(cmap)
 
+    fluid.solid = solids
     maintain_step(fluid, densities, velocities)
 
     return colormap, densities, velocities
@@ -128,7 +146,7 @@ def add_density(fluid: Fluid, density: Density):
         fluid (Fluid): The Fluid object that will be modified.
         density (Density): The Density object that will be added.
     """
-    fluid.density[density.pos_y:density.pos_y + density.size_y, density.pos_x:density.pos_x + density.size_x] += density.density
+    fluid.density[density.pos_y:density.pos_y + density.size_y, density.pos_x:density.pos_x + density.size_x] = density.density
 
 def add_velocity(fluid: Fluid, velocity: Velocity):
     """Adds a Velocity to the Fluid given

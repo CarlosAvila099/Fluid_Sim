@@ -12,7 +12,6 @@ import math
 from assets import *
 
 class Fluid:
-
     def __init__(self):
         self.rotx = 1
         self.roty = 1
@@ -32,6 +31,9 @@ class Fluid:
         # array of 2d vectors, [x, y]
         self.velo = np.full((self.size, self.size, 2), 0, dtype=float)
         self.velo0 = np.full((self.size, self.size, 2), 0, dtype=float)
+
+        # array of solids
+        self.solid = np.full((self.size, self.size), 0, dtype=float)
 
     def step(self):
         self.diffuse(self.velo0, self.velo, self.visc)
@@ -58,6 +60,7 @@ class Fluid:
 
             self.set_boundaries(x)
 
+
     def set_boundaries(self, table):
         """
         Boundaries handling
@@ -74,11 +77,20 @@ class Fluid:
             table[0, :, 0] = - table[0, :, 0]
             table[self.size - 1, :, 0] = - table[self.size - 1, :, 0]
 
+            for sol in self.solid:
+                # vertical, invert if y vector
+                table[sol.pos_y:sol.pos_y + sol.size_y, sol.pos_x, 1] = - table[sol.pos_y:sol.pos_y + sol.size_y, sol.pos_x, 1]
+                table[sol.pos_y:sol.pos_y + sol.size_y, sol.pos_x + sol.size_x, 1] = - table[sol.pos_y:sol.pos_y + sol.size_y, sol.pos_x + sol.size_x, 1]
+
+                # horizontal, invert if x vector
+                table[sol.pos_y, sol.pos_x:sol.pos_x + sol.size_x, 0] = - table[sol.pos_y, sol.pos_x:sol.pos_x + sol.size_x, 0]
+                table[sol.pos_y + sol.size_y, sol.pos_x:sol.pos_x + sol.size_x, 0] = - table[sol.pos_y + sol.size_y, sol.pos_x:sol.pos_x + sol.size_x, 0]
+
+
         table[0, 0] = 0.5 * (table[1, 0] + table[0, 1])
         table[0, self.size - 1] = 0.5 * (table[1, self.size - 1] + table[0, self.size - 2])
         table[self.size - 1, 0] = 0.5 * (table[self.size - 2, 0] + table[self.size - 1, 1])
-        table[self.size - 1, self.size - 1] = 0.5 * table[self.size - 2, self.size - 1] + \
-                                              table[self.size - 1, self.size - 2]
+        table[self.size - 1, self.size - 1] = 0.5 * table[self.size - 2, self.size - 1] + table[self.size - 1, self.size - 2]
 
     def diffuse(self, x, x0, diff):
         if diff != 0:
@@ -169,9 +181,8 @@ if __name__ == "__main__":
         from matplotlib import animation
 
         inst = Fluid()
-        cmap, density, velocity = create_from_input(inst, "Input")
+        cmap, density, velocity = create_from_input(inst, "Config1")
         
-
         def update_im(i, densities, velocities):
             maintain_step(inst, densities, velocities)
             inst.step()

@@ -1,13 +1,14 @@
 from velocity import *
-from density import Density
+from density import *
 
-def create_input(density: list, velocity: list, cmap="", filename=""):
-    """Creates an input file with the Density, Velocity and Colormap given.
+def create_input(density: list, velocity: list, solid: list, cmap="", filename=""):
+    """Creates an input file with the Density objects, Velocity objects, Solid objects and Colormap given.
     The file is created in Config folder.
 
     Args:
         density (list): The list of Density objects that the input will have.
         velocity (list): The list of Velocity objects that the input will have.
+        solid (list): The list of Solid objects that the input will have.
         cmap (str, optional): The name of the Colormap that the input will have. Defaults to "".
         filename (str, optional): The name of the file to be read without the extension. Defaults to "".
     """
@@ -16,11 +17,15 @@ def create_input(density: list, velocity: list, cmap="", filename=""):
 
     text += f"density={len(density)}\n"
     for den in density:
-        text += f"{den.to_string()}\n"
+        text += f"{den}\n"
 
     text += f"velocity={len(velocity)}\n"
     for vel in velocity:
-        text += f"{vel.to_string()}\n"
+        text += f"{vel}\n"
+    
+    text += f"solid={len(solid)}\n"
+    for sol in solid:
+        text += f"{sol}\n"
     
     text = text[:-1]
 
@@ -42,4 +47,8 @@ velocity =  [
                 Velocity(20, 40, 5, 5, VelocityAnimation.ROTATE_CW, 5)
             ]
 
-create_input(density, velocity, cmap="Paired", filename="Config1")
+solid =     [
+                Solid(20, 20, 4, 4)
+            ]
+
+create_input(density, velocity, solid, cmap="Paired", filename="Config1")
