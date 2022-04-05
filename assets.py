@@ -1,4 +1,5 @@
 from typing import List
+from density import Density
 from velocity import *
 from fluid import Fluid
 
@@ -8,13 +9,13 @@ def read_input(filename=""):
     """Reads input from a txt file. If none is given, lets the user enter a name.
 
     Args:
-        filename (str, optional): The name of the file to be read. Defaults to "".
+        filename (str, optional): The name of the file to be read without the extension. Defaults to "".
 
     Returns:
         [str, list, list]
-            str: String of the colormap written.
-            list: List of densities.
-            list: List of velocities.
+            str: String of the Colormap written.
+            list: List of Density objects.
+            list: List of Velocity objects.
     """
     if not filename:
         print("The filename must be a txt file and within the same folder as the python file.")
@@ -22,8 +23,8 @@ def read_input(filename=""):
 
     file = open(filename + ".txt", "r")
     lines = file.read().split("\n")
-    densities = []
-    velocities = []
+    den_array = []
+    vel_array = []
     colormap = ""
     current = ""
     length = 0
@@ -38,12 +39,23 @@ def read_input(filename=""):
             current = "velocity"
         elif length > 0:
             length -= 1
-            if current == "density": densities.append(line)
-            elif current == "velocity": velocities.append(line)
+            if current == "density": den_array.append(line)
+            elif current == "velocity": vel_array.append(line)
     file.close()
 
-    vel_array = []
-    for vel in velocities:
+    densities = []
+    for den in den_array:
+        info = den.split(", ")
+        pos_x = int(info[0])
+        pos_y = int(info[1])
+        size_x = int(info[2])
+        size_y = int(info[3])
+        density = int(info[4])
+        temp_den = Density(pos_x, pos_y, size_x, size_y, density)
+        densities.append(temp_den)
+
+    velocities = []
+    for vel in vel_array:
         info = vel.split(", ")
         animation_value = 0
 
@@ -56,22 +68,22 @@ def read_input(filename=""):
             animation_value = int(info[5])
 
         temp_vel = Velocity(pos_x, pos_y, strength_x, strength_y, animation, animation_value)
-        vel_array.append(temp_vel)
+        velocities.append(temp_vel)
 
-    return colormap, densities, vel_array
+    return colormap, densities, velocities
 
 def create_from_input(fluid: Fluid, filename=""):
-    """Adds densities and velocities to a fluid from an input file.
+    """Adds Density and Velocity to a Fluid from an input file.
 
     Args:
-        fluid (Fluid): The fluid to be modified.
-        filename (str, optional): The name of the file to be read. Defaults to "".
+        fluid (Fluid): The Fluid object to be modified.
+        filename (str, optional): The name of the file to be read without the extension. Defaults to "".
 
     Returns:
         [str, list, list]
             str: Name of the Colormap to be used.
-            list: List of densities.
-            list: List of velocities.
+            list: List of Density objects.
+            list: List of Velocity objects.
     """
     cmap, densities, velocities = read_input(filename)
     colormap = choose_color(cmap)
@@ -90,7 +102,7 @@ def choose_color(color_name=""):
     Returns:
         str: Name of Colormap to be used.
     """
-    if color_name:
+    if color_name and not color_name == "None":
         for color in CMAPS:
             if color_name.lower() == color.lower(): color_name = color
     else:
@@ -104,44 +116,34 @@ def choose_color(color_name=""):
         color_name = defaults[color - 1]
     return color_name
 
-def add_density(fluid: Fluid, pos_x: int, pos_y: int, size_x: int, size_y: int, density=100):
-    """Adds a density to the fluid given.
+def add_density(fluid: Fluid, density: Density):
+    """Adds a Density to the Fluid given.
 
     Args:
-        fluid (Fluid): The fluid that will be modified.
-        pos_x (int): The x position of the density to be added.
-        pos_y (int): The y position of the density to be added.
-        size_x (int): The width of the density to be added.
-        size_y (int): The height of the density to be added.
-        density (int, optional): The density value. Defaults to 100.
+        fluid (Fluid): The Fluid object that will be modified.
+        density (Density): The Density object that will be added.
     """
-    fluid.density[pos_y:pos_y + size_y, pos_x:pos_x + size_x] += density
+    fluid.density[density.pos_y:density.pos_y + density.size_y, density.pos_x:density.pos_x + density.size_x] += density.density
 
 def add_velocity(fluid: Fluid, velocity: Velocity):
-    """Adds a velocity to the fluid given
+    """Adds a Velocity to the Fluid given
 
     Args:
-        fluid (Fluid): The fluid that will be modified.
-        velocity (Velocity): The velocity that will be added.
+        fluid (Fluid): The Fluid object that will be modified.
+        velocity (Velocity): The Velocity object that will be added.
     """
     fluid.velo[velocity.pos_y, velocity.pos_x] = velocity.get_dir()
 
 def maintain_step(fluid: Fluid, densities: list, velocities: list):
-    """Adds all the densities and velocities given to the fluid. The velocities suffer a step.
+    """Adds all the Density and Velocity given to the Fluid. The Velocity suffer a step.
 
     Args:
-        fluid (Fluid): The fluid to be modified.
-        densities (list): The list of densities to be added.
-        velocities (list): The list of velocities to be added.
+        fluid (Fluid): The Fluid to be modified.
+        densities (list): The list of Density objects to be added.
+        velocities (list): The list of Velocity objects to be added.
     """
     for den in densities:
-        info = den.split(", ")
-        pos_x = int(info[0])
-        pos_y = int(info[1])
-        size_x = int(info[2])
-        size_y = int(info[3])
-        density = float(info[4])
-        add_density(fluid, pos_x, pos_y, size_x, size_y, density)
+        add_density(fluid, den)
     
     for vel in velocities:
         add_velocity(fluid, vel)
