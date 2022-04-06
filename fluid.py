@@ -4,8 +4,6 @@ and the mike ash vulgarization https://mikeash.com/pyblog/fluid-simulation-for-d
 
 https://github.com/Guilouf/python_realtime_fluidsim
 """
-from filecmp import cmp
-from matplotlib import cm
 import numpy as np
 import math
 

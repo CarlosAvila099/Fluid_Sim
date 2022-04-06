@@ -42,20 +42,18 @@ def create_input(density: list, velocity: list, solid: list, cmap="", qcolor="",
     
 
 density =   [     
-                Density(14, 14, 3, 3), 
-                Density(45, 45, 1, 6),
-                Density(0, 0, 4, 4),
-                Density(30, 25, 7, 2),
-                Density(30, 15, 3, 3)
+                Density(25, 25, 5, 5)
             ]
 
 velocity =  [
-                Velocity(20, 40, 5, 5, VelocityAnimation.ROTATE_CW, 5),
-                Velocity(30, 10, 0, 5, VelocityAnimation.RETURN_X, 5)
+                Velocity(25, 25, 3, 3, VelocityAnimation.ROTATE_CW, 5)
             ]
 
 solid =     [
-                Solid(30, 30, 10, 2)
+                Solid(10, 10, 30, 3),
+                Solid(10, 40, 30, 3),
+                Solid(10, 10, 3, 30),
+                Solid(40, 10, 3, 30)
             ]
 
-create_input(density, velocity, solid, cmap="Paired", qcolor="k", filename="Config1")
+create_input(density, velocity, solid, cmap="bone", qcolor="y", filename="Config3")
