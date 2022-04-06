@@ -176,12 +176,14 @@ class Fluid:
         return self.rotx, self.roty
 
 if __name__ == "__main__":
+    filename = ""
+    anim_name = ""
     try:
         import matplotlib.pyplot as plt
         from matplotlib import animation
 
         inst = Fluid()
-        cmap, qcolor, density, velocity, solids = create_from_input(inst, "Config1")
+        cmap, qcolor, density, velocity, solids = create_from_input(inst, filename)
         
         def update_im(i, densities, velocities, solids):
             maintain_step(inst, densities, velocities, solids)
@@ -199,7 +201,7 @@ if __name__ == "__main__":
         # plot vector field
         q = plt.quiver(inst.velo[:, :, 1], inst.velo[:, :, 0], scale=10, angles='xy', color=qcolor)
         anim = animation.FuncAnimation(fig, update_im, fargs=(density, velocity, solids), interval=0)
-        #anim.save("Movies/Movie1.gif", fps=30)
+        #anim.save("Movies/" + anim_name + ".gif", fps=30)
         plt.show()
 
     except ImportError:
@@ -208,14 +210,13 @@ if __name__ == "__main__":
         frames = 30
 
         flu = Fluid()
+        cmap, qcolor, density, velocity, solids = create_from_input(inst, filename)
 
         video = np.full((frames, flu.size, flu.size), 0, dtype=float)
 
         for step in range(0, frames):
-            flu.density[4:7, 4:7] += 100  # add density into a 3*3 square
-            flu.velo[5, 5] += [1, 2]
-
+            maintain_step(inst, density, velocity, solids)
             flu.step()
             video[step] = flu.density
 
-        imageio.mimsave('./video.gif', video.astype('uint8'))
+        imageio.mimsave("Movies/" + anim_name + ".gif", video.astype('uint8'))
