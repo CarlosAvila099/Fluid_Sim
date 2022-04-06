@@ -5,3 +5,11 @@ For this project, we were given a functional fluid simulator and we needed to ad
 * Animate velocity forces, there must be 2 behaviors.
 * Create color schemas for the simulation.
 * Simulate presence of objects in the simulation.
+
+## Animate Velocity Forces
+
+## Create Multiple Sources of Velocity and Density
+
+## Create Color Schemas
+
+## Simulate Presence of Objects
