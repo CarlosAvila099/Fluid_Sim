@@ -87,8 +87,8 @@ class Velocity:
         if abs(self.__current_length) >= self.__length: self.__step *= -1
         self.__current_length += self.__step
 
-        if self.__animation == VelocityAnimation.RETURN_X: self.pos_x += self.__current_length
-        elif self.__animation == VelocityAnimation.RETURN_Y: self.pos_y += self.__current_length
+        if self.__animation == VelocityAnimation.RETURN_X: self.pos_x += self.__step
+        elif self.__animation == VelocityAnimation.RETURN_Y: self.pos_y += self.__step
 
     def get_dir(self):
         """Returns the resulting direction of the Velocity.
