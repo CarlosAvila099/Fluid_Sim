@@ -181,10 +181,10 @@ if __name__ == "__main__":
         from matplotlib import animation
 
         inst = Fluid()
-        cmap, qcolor, density, velocity = create_from_input(inst, "Config1")
+        cmap, qcolor, density, velocity, solids = create_from_input(inst, "Config2")
         
-        def update_im(i, densities, velocities):
-            maintain_step(inst, densities, velocities)
+        def update_im(i, densities, velocities, solids):
+            maintain_step(inst, densities, velocities, solids)
             inst.step()
             im.set_array(inst.density)
             q.set_UVC(inst.velo[:, :, 1], inst.velo[:, :, 0])
@@ -198,8 +198,8 @@ if __name__ == "__main__":
 
         # plot vector field
         q = plt.quiver(inst.velo[:, :, 1], inst.velo[:, :, 0], scale=10, angles='xy', color=qcolor)
-        anim = animation.FuncAnimation(fig, update_im, fargs=(density, velocity), interval=0)
-        # anim.save("movie.mp4", fps=30, extra_args=['-vcodec', 'libx264'])
+        anim = animation.FuncAnimation(fig, update_im, fargs=(density, velocity, solids), interval=0)
+        #anim.save("movie2.gif", fps=30)
         plt.show()
 
     except ImportError:

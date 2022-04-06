@@ -118,9 +118,9 @@ def create_from_input(fluid: Fluid, filename=""):
     q_color = choose_quiver(qcolor)
 
     fluid.solid = solids
-    maintain_step(fluid, densities, velocities)
+    maintain_step(fluid, densities, velocities, solids)
 
-    return colormap, q_color, densities, velocities
+    return colormap, q_color, densities, velocities, solids
 
 def choose_color(color_name=""):
     """Gets the Colormap from the name given, if none is given, lets the user choose one.
@@ -190,7 +190,7 @@ def add_velocity(fluid: Fluid, velocity: Velocity):
     """
     fluid.velo[velocity.pos_y, velocity.pos_x] = velocity.get_dir()
 
-def maintain_step(fluid: Fluid, densities: list, velocities: list):
+def maintain_step(fluid: Fluid, densities: list, velocities: list, solids):
     """Adds all the Density and Velocity given to the Fluid. The Velocity suffer a step.
 
     Args:
@@ -204,3 +204,7 @@ def maintain_step(fluid: Fluid, densities: list, velocities: list):
     for vel in velocities:
         add_velocity(fluid, vel)
         vel.step()
+
+    for sol in solids:
+        fluid.velo[sol.pos_y:sol.pos_y + sol.size_y, sol.pos_x:sol.pos_x + sol.size_x] = 0
+        fluid.density[sol.pos_y:sol.pos_y + sol.size_y, sol.pos_x:sol.pos_x + sol.size_x] = 0
