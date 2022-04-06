@@ -181,7 +181,7 @@ if __name__ == "__main__":
         from matplotlib import animation
 
         inst = Fluid()
-        cmap, qcolor, density, velocity, solids = create_from_input(inst, "Config2")
+        cmap, qcolor, density, velocity, solids = create_from_input(inst, "Config1")
         
         def update_im(i, densities, velocities, solids):
             maintain_step(inst, densities, velocities, solids)
@@ -199,7 +199,7 @@ if __name__ == "__main__":
         # plot vector field
         q = plt.quiver(inst.velo[:, :, 1], inst.velo[:, :, 0], scale=10, angles='xy', color=qcolor)
         anim = animation.FuncAnimation(fig, update_im, fargs=(density, velocity, solids), interval=0)
-        #anim.save("movie2.gif", fps=30)
+        #anim.save("Movies/Movie1.gif", fps=30)
         plt.show()
 
     except ImportError:
