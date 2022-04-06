@@ -190,13 +190,24 @@ def add_velocity(fluid: Fluid, velocity: Velocity):
     """
     fluid.velo[velocity.pos_y, velocity.pos_x] = velocity.get_dir()
 
-def maintain_step(fluid: Fluid, densities: list, velocities: list, solids):
-    """Adds all the Density and Velocity given to the Fluid. The Velocity suffer a step.
+def add_solid(fluid: Fluid, solid: Solid):
+    """Adds a Solid to the Fluid given.
+
+    Args:
+        fluid (Fluid): The Fluid object that will be modified.
+        solid (Solid): The Solid object that will be added.
+    """
+    fluid.velo[solid.pos_y:solid.pos_y + solid.size_y, solid.pos_x:solid.pos_x + solid.size_x] = 0
+    fluid.density[solid.pos_y:solid.pos_y + solid.size_y, solid.pos_x:solid.pos_x + solid.size_x] = 0
+
+def maintain_step(fluid: Fluid, densities: list, velocities: list, solids: list):
+    """Adds all the Density object, Velocity objects and Solid objects given to the Fluid. The Velocity suffer a step.
 
     Args:
         fluid (Fluid): The Fluid to be modified.
         densities (list): The list of Density objects to be added.
         velocities (list): The list of Velocity objects to be added.
+        solids (list): The list of Solid objects to be added.
     """
     for den in densities:
         add_density(fluid, den)
@@ -206,5 +217,4 @@ def maintain_step(fluid: Fluid, densities: list, velocities: list, solids):
         vel.step()
 
     for sol in solids:
-        fluid.velo[sol.pos_y:sol.pos_y + sol.size_y, sol.pos_x:sol.pos_x + sol.size_x] = 0
-        fluid.density[sol.pos_y:sol.pos_y + sol.size_y, sol.pos_x:sol.pos_x + sol.size_x] = 0
+        add_solid(fluid, sol)
