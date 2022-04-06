@@ -24,7 +24,7 @@ Then I created a way for this new densities and velocities to mantain throughout
 ## Create Color Schemas
 After adding all the velocities and densities I started to investigate how to change color schemas for the animation, my solution was to use the Colormaps that matplotlib already has.
 I only needed to make it a possible variable for the input, this was already solved when I added multiple velocities and densities, so it wasn't a problem.
-The user can change the animation [https://matplotlib.org/3.5.1/tutorials/colors/colormaps.html](Colormap) and the [https://matplotlib.org/stable/tutorials/colors/colors.html](Quiver Color).
+The user can change the animation [Colormap](https://matplotlib.org/3.5.1/tutorials/colors/colormaps.html) and the [Quiver Color](https://matplotlib.org/stable/tutorials/colors/colors.html).
 
 
 ## Simulate Presence of Objects
