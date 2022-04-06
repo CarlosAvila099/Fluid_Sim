@@ -174,8 +174,9 @@ class Fluid:
         return self.rotx, self.roty
 
 if __name__ == "__main__":
-    filename = ""
-    anim_name = ""
+    filename = "Config5"
+    anim_name = "Movie5"
+    save_anim = True
     try:
         import matplotlib.pyplot as plt
         from matplotlib import animation
@@ -199,7 +200,7 @@ if __name__ == "__main__":
         # plot vector field
         q = plt.quiver(inst.velo[:, :, 1], inst.velo[:, :, 0], scale=10, angles='xy', color=qcolor)
         anim = animation.FuncAnimation(fig, update_im, fargs=(density, velocity, solids), interval=0)
-        #anim.save("Movies/" + anim_name + ".gif", fps=30)
+        if save_anim: anim.save("Movies/" + anim_name + ".gif", fps=30)
         plt.show()
 
     except ImportError:
