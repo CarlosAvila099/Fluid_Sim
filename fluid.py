@@ -181,7 +181,7 @@ if __name__ == "__main__":
         from matplotlib import animation
 
         inst = Fluid()
-        cmap, density, velocity = create_from_input(inst, "Config1")
+        cmap, qcolor, density, velocity = create_from_input(inst, "Config1")
         
         def update_im(i, densities, velocities):
             maintain_step(inst, densities, velocities)
@@ -197,7 +197,7 @@ if __name__ == "__main__":
         im = plt.imshow(inst.density, vmax=100, interpolation='bilinear', cmap=cmap)
 
         # plot vector field
-        q = plt.quiver(inst.velo[:, :, 1], inst.velo[:, :, 0], scale=10, angles='xy')
+        q = plt.quiver(inst.velo[:, :, 1], inst.velo[:, :, 0], scale=10, angles='xy', color=qcolor)
         anim = animation.FuncAnimation(fig, update_im, fargs=(density, velocity), interval=0)
         # anim.save("movie.mp4", fps=30, extra_args=['-vcodec', 'libx264'])
         plt.show()

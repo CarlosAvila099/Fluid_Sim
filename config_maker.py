@@ -1,8 +1,8 @@
 from velocity import *
 from density import *
 
-def create_input(density: list, velocity: list, solid: list, cmap="", filename=""):
-    """Creates an input file with the Density objects, Velocity objects, Solid objects and Colormap given.
+def create_input(density: list, velocity: list, solid: list, cmap="", qcolor="", filename=""):
+    """Creates an input file with the Density objects, Velocity objects, Solid objects, Colormap and Quiver Color given.
     The file is created in Config folder.
 
     Args:
@@ -10,10 +10,16 @@ def create_input(density: list, velocity: list, solid: list, cmap="", filename="
         velocity (list): The list of Velocity objects that the input will have.
         solid (list): The list of Solid objects that the input will have.
         cmap (str, optional): The name of the Colormap that the input will have. Defaults to "".
+            See also: https://matplotlib.org/3.5.1/tutorials/colors/colormaps.html
+        qcolor (str, optional): The name of the Color that the Quiver will have. Defaults to "".
+            See also: https://matplotlib.org/stable/tutorials/colors/colors.html
         filename (str, optional): The name of the file to be read without the extension. Defaults to "".
     """
     if not cmap: cmap = "None"
     text = f"colormap={cmap}\n"
+
+    if not cmap: cmap = "None"
+    text += f"quiver={qcolor}\n"
 
     text += f"density={len(density)}\n"
     for den in density:
@@ -44,11 +50,12 @@ density =   [
             ]
 
 velocity =  [
-                Velocity(20, 40, 5, 5, VelocityAnimation.ROTATE_CW, 5)
+                Velocity(20, 40, 5, 5, VelocityAnimation.ROTATE_CW, 5),
+                Velocity(30, 10, 0, 5, VelocityAnimation.RETURN_X, 5)
             ]
 
 solid =     [
-                Solid(20, 20, 4, 4)
+                Solid(30, 30, 10, 2)
             ]
 
-create_input(density, velocity, solid, cmap="Paired", filename="Config1")
+create_input(density, velocity, solid, cmap="Paired", qcolor="k", filename="Config1")

@@ -1,10 +1,11 @@
 import sys
-from unittest.util import sorted_list_difference
 from density import *
 from velocity import *
 from fluid import Fluid
 
 CMAPS = ['viridis', 'plasma', 'inferno', 'magma', 'cividis', 'Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds', 'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu', 'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn', 'binary', 'gist_yarg', 'gist_gray', 'gray', 'bone', 'pink', 'spring', 'summer', 'autumn', 'winter', 'cool', 'Wistia', 'hot', 'afmhot', 'gist_heat', 'copper', 'PiYG', 'PRGn', 'BrBG', 'PuOr', 'RdGy', 'RdBu', 'RdYlBu', 'RdYlGn', 'Spectral', 'coolwarm', 'bwr', 'seismic', 'twilight', 'twilight_shifted', 'hsv', 'Pastel1', 'Pastel2', 'Paired', 'Accent', 'Dark2', 'Set1', 'Set2', 'Set3', 'tab10', 'tab20', 'tab20b', 'tab20c', 'flag', 'prism', 'ocean', 'gist_earth', 'terrain', 'gist_stern', 'gnuplot', 'gnuplot2', 'CMRmap', 'cubehelix', 'brg', 'gist_rainbow', 'rainbow', 'jet', 'turbo', 'nipy_spectral', 'gist_ncar']
+
+QCOLOR = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
 
 def read_input(filename=""):
     """Reads input from a txt file. If none is given, lets the user enter a name.
@@ -14,8 +15,9 @@ def read_input(filename=""):
         filename (str, optional): The name of the file to be read without the extension. Defaults to "".
 
     Returns:
-        [str, list, list, list]
+        [str, str, list, list, list]
             str: String of the Colormap written.
+            str: String of the Quiver Color written.
             list: List of Density objects.
             list: List of Velocity objects.
             list: List of Solid objects.
@@ -34,11 +36,14 @@ def read_input(filename=""):
     vel_array = []
     sol_array = []
     colormap = ""
+    qcolor = ""
     current = ""
     length = 0
     for line in lines:
         if "colormap" in line:
             colormap = line.split("=")[1]
+        elif "quiver" in line:
+            qcolor = line.split("=")[1]
         elif "density" in line:
             length = int(line.split("=")[1])
             current = "density"
@@ -92,7 +97,7 @@ def read_input(filename=""):
         temp_sol = Solid(pos_x, pos_y, size_x, size_y)
         solids.append(temp_sol)
 
-    return colormap, densities, velocities, solids
+    return colormap, qcolor, densities, velocities, solids
 
 def create_from_input(fluid: Fluid, filename=""):
     """Adds Density and Velocity to a Fluid from an input file.
@@ -102,18 +107,20 @@ def create_from_input(fluid: Fluid, filename=""):
         filename (str, optional): The name of the file to be read without the extension. Defaults to "".
 
     Returns:
-        [str, list, list]
+        [str, str, list, list]
             str: Name of the Colormap to be used.
+            str: Name of the Quiver Color to be used.
             list: List of Density objects.
             list: List of Velocity objects.
     """
-    cmap, densities, velocities, solids = read_input(filename)
+    cmap, qcolor, densities, velocities, solids = read_input(filename)
     colormap = choose_color(cmap)
+    q_color = choose_quiver(qcolor)
 
     fluid.solid = solids
     maintain_step(fluid, densities, velocities)
 
-    return colormap, densities, velocities
+    return colormap, q_color, densities, velocities
 
 def choose_color(color_name=""):
     """Gets the Colormap from the name given, if none is given, lets the user choose one.
@@ -125,19 +132,45 @@ def choose_color(color_name=""):
     Returns:
         str: Name of Colormap to be used.
     """
+    color_map = ""
     if color_name and not color_name == "None":
         for color in CMAPS:
-            if color_name.lower() == color.lower(): color_name = color
-    else:
-        defaults = ["viridis", "Wistia", "winter"]
-        print("1. Purple to yellow")
-        print("2. Yellow to orange")
+            if color_name.lower() == color.lower(): color_map = color
+    if not color_map:
+        defaults = ["Paired", "viridis", "bone"]
+        print("1. Temperature Map")
+        print("2. Purple to yellow")
         print("3. Blue to green")
         while True:
             color = int(input("Choose a color (default 1): ") or 1)
             if color in [1, 2, 3]: break
-        color_name = defaults[color - 1]
-    return color_name
+        color_map = defaults[color - 1]
+    return color_map
+
+def choose_quiver(color_name=""):
+    """Gets the Quiver Color from the name given, if none is given, lets the user choose one.
+
+    Args:
+        color_name (str, optional): The name of the Color. Defaults to "".
+            See also: https://matplotlib.org/stable/tutorials/colors/colors.html
+
+    Returns:
+        str: Name of Quiver Color to be used.
+    """
+    q_color = ""
+    if color_name and not color_name == "None":
+        for color in QCOLOR:
+            if color_name.lower() == color.lower(): q_color = color
+    if not q_color:
+        defaults = ["k", "y", "w"]
+        print("1. Black")
+        print("2. Yellow")
+        print("3. White")
+        while True:
+            color = int(input("Choose a color (default 1): ") or 1)
+            if color in [1, 2, 3]: break
+        q_color = defaults[color - 1]
+    return q_color
 
 def add_density(fluid: Fluid, density: Density):
     """Adds a Density to the Fluid given.
