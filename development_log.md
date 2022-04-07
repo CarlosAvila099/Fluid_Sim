@@ -32,5 +32,14 @@ I only needed to make it a possible variable for the input, this was already sol
 
 The user can change the animation [Colormap](https://matplotlib.org/3.5.1/tutorials/colors/colormaps.html) and the [Quiver Color](https://matplotlib.org/stable/tutorials/colors/colors.html).
 
-
 ## Simulate Presence of Objects
+I created a Solid class to simplify the reading of the information needed from the object.
+
+This part was a little bit more complicated, at first I played a little bit with the set_boundaries() function of the fluid to understand how the walls were made. 
+
+After understanding it I tried to recreate the function outside the fluid to add forces without needing to modify said function, it didn't work, so I added to the Fluid an array for Solids that will be checked while creating the boundaries to make them work as walls.
+
+After making this, I saw that although they work as walls, some density passed through the walls and stayed there, so I created a function that removes the velocity and density where the walls are supposed to be.
+
+## Simplifying Config Creation
+This wasn't part of the tasks given, but to make it easier for the user to create different configurations I created config_maker.py that creates a text file with the information and correct format needed for the code to work.
